@@ -4,15 +4,18 @@ var User = require('./models/User');
 var Exercise = require('./models/Exercise');
 
 routes.post('/exercise/new-user', (req, res) => {
+  console.log(req.body.username);
   User.find({ username: req.body.username }, (err, user) => {
     if(err) throw err;
     if(user) {
-      return res.json(user);
+      console.log('User found');
+      res.json(user);
     }else{
+      console.log('No user found, creating new one.');
       let newUser = new User({username: req.body.username});
       newUser.save((err, uzer) => {
         if(err) throw err;
-        return res.json(uzer);
+        res.json(uzer);
       });    
     }
   });
