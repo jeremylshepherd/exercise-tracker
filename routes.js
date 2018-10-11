@@ -49,7 +49,7 @@ routes.post('/exercise/add', (req, res) => {
     obj.creator = user._id;
     obj.description = req.body.description;
     obj.duration = req.body.duration;
-    if(req.body.date) {
+    if(req.body.date && req.body.date.length == 8) {
       obj.date = convertDate(req.body.date);
     }
     let exercise = new Exercise(obj);
@@ -59,21 +59,24 @@ routes.post('/exercise/add', (req, res) => {
         let obj2 = {};
         obj2._id = user._id;
         obj2.username = user.username;
-        obj2.exercises = exercises;
-        
+        obj2.exercises = exercises;        
         return res.json(obj2);
       });      
     });
   });
 });
 
-routes.get('/exercise/log/:userId', (req, res) => {
-  User.findOne({ _id: req.params.userId }, (err, user) => {
+routes.get('/exercise/log', (req, res) => {
+  User.findOne({ _id: req.query.userId }, (err, user) => {
     if(err) throw err;
     if(!user) {
       return res.json({ message: 'No user found, please register first.' });
     }
-    Exercise.find({ creator: user._id }, (err, exercise) => {
+    let query = Exercise.find({ creator: user._id });
+    if(req.query.limit) query = query.limit(req.query.limit);
+    if(req.query.sort) query = 
+    
+    , (err, exercise) => {
       if(err) throw err;
       let obj = {};
       obj._id = user._id;
@@ -83,6 +86,10 @@ routes.get('/exercise/log/:userId', (req, res) => {
       return res.json(obj);
     });
   });
+});
+
+routes.get('//', (req, res) => {
+
 });
 
 module.exports = routes;
