@@ -90,8 +90,4 @@ routes.get('/exercise/log', (req, res) => {
   });
 });
 
-routes.get('//', (req, res) => {
-
-});
-
 module.exports = routes;
