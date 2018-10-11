@@ -22,6 +22,7 @@ routes.post('/exercise/new-user', (req, res) => {
 });
 
 routes.get('/exercise/users', (req, res) => {
+  console.log(req);
   User.find((err, users) => {
     if(err) throw err;
     if(users) return res.json(users);
