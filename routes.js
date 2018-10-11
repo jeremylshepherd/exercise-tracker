@@ -36,11 +36,27 @@ routes.post('/exercise/add', (req, res) => {
   User.findOne({ _id: req.body.userId }, (err, user) => {
     if(err) throw err;
     if(!user) {
-      return es.json({ message: 'No user found, please register first.' });
+      return res.json({ message: 'No user found, please register first.' });
     }
-    let exercise = new Exercise({
-      description: req.bo
-    })
+    let obj = {};
+    obj.creator = user._id;
+    obj.description = req.body.description;
+    obj.duration = req.body.duration;
+    if(req.body.date !== null) {
+      obj.date = req.body.date;
+    }
+    let exercise = new Exercise(obj);
+    exercise.save((err, data) => {
+      if(err) throw err;
+      Exercise.find({ creator: user._id}, (err, exercises) => {
+        let obj2 = {};
+        obj2._id = user._id;
+        obj2.username = user.username;
+        obj2.exercises = exercises;
+        
+        return res.json(data);
+      });      
+    });
   });
 });
 
