@@ -3,6 +3,12 @@ var bodyParser = require('body-parser');
 var User = require('./models/User');
 var Exercise = require('./models/Exercise');
 
+const convertDate = (str) => {
+  let year = +str.slice(0, 4); 
+  let month = +str.slice(4, 6); 
+  let day = +str.slice(6, 8);
+  return Date.parse(new Date(year, month - 1, day));
+};
 
 //Create new User
 routes.post('/exercise/new-user', (req, res) => {
@@ -44,7 +50,7 @@ routes.post('/exercise/add', (req, res) => {
     obj.description = req.body.description;
     obj.duration = req.body.duration;
     if(req.body.date) {
-      obj.date = req.body.date;
+      obj.date = convertDate(req.body.date);
     }
     let exercise = new Exercise(obj);
     exercise.save((err, data) => {
