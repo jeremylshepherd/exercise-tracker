@@ -67,22 +67,24 @@ routes.post('/exercise/add', (req, res) => {
 });
 
 routes.get('/exercise/log', (req, res) => {
+  console.log(req.query);
   User.findOne({ _id: req.query.userId }, (err, user) => {
     if(err) throw err;
     if(!user) {
       return res.json({ message: 'No user found, please register first.' });
     }
     let query = Exercise.find({ creator: user._id });
-    if(req.query.limit) query = query.limit(req.query.limit);
-    if(req.query.sort) query = 
+    if(req.query.limit) query = query.limit(+req.query.limit);
+    if(req.query.from) query = query.where({date: {$gte: convertDate(req.query.from) }});
+    if(req.query.to) query = query.where('date').lte(convertDate(req.query.to));
     
-    , (err, exercise) => {
+    query.exec((err, exercises) => {
       if(err) throw err;
       let obj = {};
       obj._id = user._id;
       obj.username = user.username;
-      obj.exercises = exercise;
-      obj.count = exercise.length;
+      obj.exercises = exercises;
+      obj.count = exercises.length;
       return res.json(obj);
     });
   });
